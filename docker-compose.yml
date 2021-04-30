@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+    consul-master:
+        build: .
+        container_name: consul-master
+        restart: always
+        tty: true
+        ports:
+            - "8080:80"
+            - "8500:8500"
+        networks:
+            - app-network
+        command: "consul agent -server -ui -bootstrap-expect 1 -data-dir /var/consul.d -config-dir /etc/consul.d -node consul-master -client 0.0.0.0"
+    
+    consul-client1:
+        build: .
+        container_name: consul-client1
+        restart: always
+        tty: true
+        ports:
+            - "8081:80"
+        networks: 
+            - app-network
+        command: "consul agent -data-dir /var/consul.d -config-dir /etc/consul.d -node consul-client1"
+
+    
+    consul-client2:
+        build: .
+        container_name: consul-client2
+        restart: always
+        tty: true
+        ports:
+            - "8082:80"
+        networks: 
+            - app-network
+        command: "consul agent -data-dir /var/consul.d -config-dir /etc/consul.d -node consul-client2"
+
+    # express-server:
+    #     build:
+    #         context: ./server
+    #         dockerfile: Dockerfile-client
+    #     container_name: express-server
+    #     restart: always
+    #     tty: true
+    #     ports:
+    #         - "8090:8090"
+    #     networks: 
+    #         - app-network
+    
+networks: 
+    app-network:
+        driver: bridge
